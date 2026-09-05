@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-label="Njia">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f2a1e"/>
+      <stop offset="1" stop-color="#123a2a"/>
+    </linearGradient>
+    <linearGradient id="path" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#14F195"/>
+      <stop offset="1" stop-color="#9945FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="72" fill="url(#bg)"/>
+  <!-- a winding path (njia = path/way) leading to a heart -->
+  <path d="M96 320 C 150 260, 120 210, 176 188 C 232 166, 210 120, 264 108"
+        fill="none" stroke="url(#path)" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="96" cy="320" r="14" fill="#14F195"/>
+  <path d="M300 96 c 16 -18, 46 -6, 46 18 c 0 26 -34 44 -46 56 c -12 -12 -46 -30 -46 -56 c 0 -24 30 -36 46 -18 z"
+        fill="#9945FF"/>
+</svg>
