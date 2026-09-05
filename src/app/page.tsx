@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import QRCode from "qrcode";
 
 interface Receipt {
   giver: string;
@@ -27,6 +28,7 @@ export default function Home() {
   const [feed, setFeed] = useState<Feed | null>(null);
   const [blinkUrl, setBlinkUrl] = useState("");
   const [donateUrl, setDonateUrl] = useState("");
+  const [qr, setQr] = useState("");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -34,7 +36,17 @@ export default function Home() {
     const action = `${origin}/api/actions/donate`;
     setDonateUrl(`${origin}/donate`);
     // dial.to interstitial unfurls any action URL as a blink in the browser.
-    setBlinkUrl(`https://dial.to/?action=solana-action:${encodeURIComponent(action)}`);
+    const blink = `https://dial.to/?action=solana-action:${encodeURIComponent(action)}`;
+    setBlinkUrl(blink);
+    // Encode the Blink as a QR so it can be scanned off a screen or a poster —
+    // giving that literally travels anywhere a link (or a printout) can go.
+    QRCode.toDataURL(blink, {
+      margin: 1,
+      width: 320,
+      color: { dark: "#0a0f0d", light: "#e8f0ec" },
+    })
+      .then(setQr)
+      .catch(() => setQr(""));
 
     let alive = true;
     const load = async () => {
@@ -103,6 +115,12 @@ export default function Home() {
             code. A Blink-aware wallet turns it into a one-tap gift, no site
             visit required.
           </p>
+          {qr && (
+            <div className="qr">
+              <img src={qr} alt="Scan to give" width={160} height={160} />
+              <span className="qr-cap">Scan with a phone wallet to give</span>
+            </div>
+          )}
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             {blinkUrl && (
               <a className="btn" href={blinkUrl} target="_blank" rel="noreferrer">
@@ -126,7 +144,10 @@ export default function Home() {
         <div className="receipts">
           {feed?.receipts.map((r) => (
             <div className="receipt" key={r.transferSig}>
-              <div className="amt">{r.amountSol} SOL</div>
+              <div className="head">
+                <span className="amt">{r.amountSol} SOL</span>
+                <span className="stamp">Njia receipt</span>
+              </div>
               <div className="who">from {short(r.giver)}</div>
               <div className="links">
                 <a href={tx(r.transferSig)} target="_blank" rel="noreferrer">

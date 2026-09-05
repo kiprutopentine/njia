@@ -40,6 +40,7 @@ a:hover { text-decoration: underline; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  align-items: start;
 }
 @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
 
@@ -72,17 +73,31 @@ a:hover { text-decoration: underline; }
 
 .hint { color: var(--muted); font-size: 13px; margin-top: 10px; }
 
+.qr { display: flex; flex-direction: column; align-items: center; gap: 8px;
+  margin: 4px 0 16px; }
+.qr img { border-radius: 10px; background: var(--surface-2);
+  padding: 10px; border: 1px solid var(--border); }
+.qr-cap { color: var(--muted); font-size: 12px; }
+
 .wall { margin-top: 32px; }
 .wall h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--muted); margin-bottom: 16px; font-weight: 600; }
 .receipts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 @media (max-width: 720px) { .receipts { grid-template-columns: 1fr; } }
 
-.receipt { background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 16px; }
+.receipt { position: relative; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px 4px 10px 10px; padding: 18px 16px 16px; }
+/* perforated top edge, like a torn-off receipt */
+.receipt::before { content: ""; position: absolute; top: -1px; left: 0; right: 0; height: 6px;
+  background-image: radial-gradient(circle at 6px 0, transparent 0 4px, var(--surface) 4px);
+  background-size: 12px 6px; background-repeat: repeat-x; }
+.receipt .head { display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 1px dashed var(--border); padding-bottom: 10px; margin-bottom: 10px; }
 .receipt .amt { font-size: 20px; font-weight: 700; color: var(--green); }
+.receipt .stamp { font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); }
 .receipt .who { font-family: ui-monospace, monospace; font-size: 12px;
-  color: var(--muted); margin-top: 6px; word-break: break-all; }
+  color: var(--muted); word-break: break-all; }
 .receipt .links { margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap; }
 .receipt .links a { font-size: 12px; }
 .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
