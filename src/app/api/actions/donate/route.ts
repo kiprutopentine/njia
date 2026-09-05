@@ -145,9 +145,8 @@ export const POST = async (req: Request) => {
     return Response.json(payload, { headers });
   } catch (err) {
     console.error("donate POST error:", err);
-    const reason = err instanceof Error ? err.message : String(err);
     return Response.json(
-      { message: `Failed to build donation transaction. [${reason}]` },
+      { message: "Failed to build donation transaction." },
       { status: 500, headers },
     );
   }

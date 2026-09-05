@@ -39,7 +39,30 @@ async function main() {
   } else {
     giver = Keypair.generate();
     console.log("Generated giver:", giver.publicKey.toBase58());
-    console.log("Giver secret (b58):", bs58.encode(giver.secretKey));
+    // Self-fund from the cause wallet so the test is one command.
+    try {
+      const { getCauseWallet } = await import("../src/lib/solana");
+      const cause = getCauseWallet();
+      const fundLamports = Math.round((amountSol + 0.02) * LAMPORTS_PER_SOL);
+      const { SystemProgram, Transaction } = await import("@solana/web3.js");
+      const fundTx = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: cause.publicKey,
+          toPubkey: giver.publicKey,
+          lamports: fundLamports,
+        }),
+      );
+      const bh = await conn.getLatestBlockhash();
+      fundTx.recentBlockhash = bh.blockhash;
+      fundTx.feePayer = cause.publicKey;
+      fundTx.sign(cause);
+      const fsig = await conn.sendRawTransaction(fundTx.serialize());
+      await conn.confirmTransaction({ signature: fsig, ...bh }, "confirmed");
+      console.log(`Funded giver ${(amountSol + 0.02).toFixed(2)} SOL from cause wallet.`);
+    } catch (e) {
+      console.error("Self-fund failed:", (e as Error).message);
+      console.log("Giver secret (b58):", bs58.encode(giver.secretKey));
+    }
   }
 
   const bal = await conn.getBalance(giver.publicKey);
