@@ -60,12 +60,15 @@ function receiptMetadata(
   transferSig: string,
 ): MetadataArgsArgs {
   const dateStr = new Date().toISOString().slice(0, 10);
+  // Bubblegum caps the uri at 200 chars, so keep it compact. The giver and
+  // transfer signature already live on-chain (leaf owner + the transfer tx),
+  // so they don't need to be in the uri. The metadata route fills in the rest.
+  void giver;
+  void transferSig;
   return {
     name: `Njia Receipt: ${amountSol} SOL`,
     symbol: "NJIA",
-    // Points to an on-app JSON metadata route so the asset resolves in wallets
-    // and explorers that fetch the URI.
-    uri: `${BASE_URL}/api/receipt-metadata?giver=${giver}&amount=${amountSol}&sig=${transferSig}&date=${dateStr}`,
+    uri: `${BASE_URL}/api/receipt-metadata?a=${amountSol}&d=${dateStr}`,
     sellerFeeBasisPoints: 0,
     collection: none(),
     creators: [],
@@ -110,16 +113,19 @@ export async function mintReceipt(params: {
   const cnftSig = bs58.encode(signature);
 
   // Derive the asset id from the minted leaf for explorer/wallet lookups.
+  // The confirmed tx can take a moment to be queryable, so retry briefly.
   let assetId = "";
-  try {
-    const leaf = await parseLeafFromMintV1Transaction(umi, signature);
-    const [assetIdPda] = findLeafAssetIdPda(umi, {
-      merkleTree,
-      leafIndex: leaf.nonce,
-    });
-    assetId = assetIdPda.toString();
-  } catch {
-    // Non-fatal: the mint succeeded even if leaf parsing hiccups.
+  for (let attempt = 0; attempt < 4 && !assetId; attempt++) {
+    try {
+      const leaf = await parseLeafFromMintV1Transaction(umi, signature);
+      const [assetIdPda] = findLeafAssetIdPda(umi, {
+        merkleTree,
+        leafIndex: leaf.nonce,
+      });
+      assetId = assetIdPda.toString();
+    } catch {
+      await new Promise((r) => setTimeout(r, 1500));
+    }
   }
 
   return { cnftSig, assetId };

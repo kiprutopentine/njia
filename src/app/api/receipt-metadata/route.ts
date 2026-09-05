@@ -8,10 +8,8 @@ import { CAUSE, iconUrl } from "@/lib/config";
  */
 export const GET = async (req: Request) => {
   const url = new URL(req.url);
-  const giver = url.searchParams.get("giver") ?? "unknown";
-  const amount = url.searchParams.get("amount") ?? "0";
-  const sig = url.searchParams.get("sig") ?? "";
-  const date = url.searchParams.get("date") ?? "";
+  const amount = url.searchParams.get("a") ?? url.searchParams.get("amount") ?? "0";
+  const date = url.searchParams.get("d") ?? url.searchParams.get("date") ?? "";
 
   const metadata = {
     name: `Njia Receipt: ${amount} SOL`,
@@ -25,8 +23,6 @@ export const GET = async (req: Request) => {
       { trait_type: "Cause", value: CAUSE.title },
       { trait_type: "Amount (SOL)", value: amount },
       { trait_type: "Date", value: date },
-      { trait_type: "Giver", value: giver },
-      { trait_type: "Transfer", value: sig },
     ],
     properties: {
       category: "image",
