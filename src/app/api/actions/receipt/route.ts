@@ -7,6 +7,11 @@ import { CAUSE, iconUrl, ENABLE_CNFT_RECEIPT } from "@/lib/config";
 import { addReceipt } from "@/lib/receipts";
 import { mintReceipt } from "@/lib/cnft";
 
+// Mints a cNFT with the cause wallet, so it needs the Node.js runtime and
+// must not be cached.
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 const headers = createActionHeaders();
 
 export const OPTIONS = async () => new Response(null, { headers });

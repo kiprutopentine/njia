@@ -16,6 +16,11 @@ import {
 import { CAUSE, iconUrl } from "@/lib/config";
 import { getConnection, getCausePublicKey } from "@/lib/solana";
 
+// These routes build live transactions and read the wallet secret, so they
+// must run on the Node.js runtime and never be cached.
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 const headers = createActionHeaders();
 
 // Memo program, used to stamp each donation with a human-readable note that
