@@ -36,7 +36,7 @@ export const GET = async (req: Request) => {
   const payload: ActionGetResponse = {
     type: "action",
     title: `${CAUSE.title} — ${CAUSE.organization}`,
-    icon: iconUrl(),
+    icon: iconUrl(origin),
     description: CAUSE.description,
     label: "Give",
     links: {

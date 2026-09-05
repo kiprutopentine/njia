@@ -42,7 +42,12 @@ export const POST = async (req: Request) => {
 
   if (ENABLE_CNFT_RECEIPT && giver && transferSig) {
     try {
-      const result = await mintReceipt({ giver, amountSol: amount, transferSig });
+      const result = await mintReceipt({
+        giver,
+        amountSol: amount,
+        transferSig,
+        origin: url.origin,
+      });
       cnftSig = result.cnftSig;
       assetId = result.assetId;
       receiptLine = "A compressed-NFT receipt was minted to your wallet.";
@@ -68,7 +73,7 @@ export const POST = async (req: Request) => {
   const payload: CompletedAction = {
     type: "completed",
     title: "Thank you for giving 🌱",
-    icon: iconUrl(),
+    icon: iconUrl(url.origin),
     label: "Gift complete",
     description:
       `You gave ${amount} SOL to ${CAUSE.title}. ${receiptLine}` +

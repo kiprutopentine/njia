@@ -55,20 +55,18 @@ export async function createReceiptTree(): Promise<string> {
 
 /** Metadata for a Njia receipt cNFT. */
 function receiptMetadata(
-  giver: string,
   amountSol: number,
-  transferSig: string,
+  origin?: string,
 ): MetadataArgsArgs {
   const dateStr = new Date().toISOString().slice(0, 10);
+  const base = origin ?? BASE_URL;
   // Bubblegum caps the uri at 200 chars, so keep it compact. The giver and
   // transfer signature already live on-chain (leaf owner + the transfer tx),
   // so they don't need to be in the uri. The metadata route fills in the rest.
-  void giver;
-  void transferSig;
   return {
     name: `Njia Receipt: ${amountSol} SOL`,
     symbol: "NJIA",
-    uri: `${BASE_URL}/api/receipt-metadata?a=${amountSol}&d=${dateStr}`,
+    uri: `${base}/api/receipt-metadata?a=${amountSol}&d=${dateStr}`,
     sellerFeeBasisPoints: 0,
     collection: none(),
     creators: [],
@@ -88,6 +86,7 @@ export async function mintReceipt(params: {
   giver: string;
   amountSol: number;
   transferSig: string;
+  origin?: string;
 }): Promise<MintReceiptResult> {
   const treeAddress = process.env.CNFT_TREE_ADDRESS;
   if (!treeAddress) {
@@ -98,11 +97,7 @@ export async function mintReceipt(params: {
   const merkleTree = publicKey(treeAddress);
   const leafOwner = publicKey(params.giver);
 
-  const metadata = receiptMetadata(
-    params.giver,
-    params.amountSol,
-    params.transferSig,
-  );
+  const metadata = receiptMetadata(params.amountSol, params.origin);
 
   const { signature } = await mintV1(umi, {
     leafOwner,

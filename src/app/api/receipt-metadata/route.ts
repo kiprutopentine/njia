@@ -17,7 +17,7 @@ export const GET = async (req: Request) => {
     description:
       `Thank you for giving ${amount} SOL to "${CAUSE.title}" via ${CAUSE.organization}. ` +
       `This compressed-NFT is your on-chain proof of generosity.`,
-    image: iconUrl(),
+    image: iconUrl(url.origin),
     external_url: url.origin,
     attributes: [
       { trait_type: "Cause", value: CAUSE.title },
@@ -26,7 +26,7 @@ export const GET = async (req: Request) => {
     ],
     properties: {
       category: "image",
-      files: [{ uri: iconUrl(), type: "image/svg+xml" }],
+      files: [{ uri: iconUrl(url.origin), type: "image/svg+xml" }],
     },
   };
 

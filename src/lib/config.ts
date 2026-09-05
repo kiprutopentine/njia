@@ -28,7 +28,12 @@ export const CAUSE = {
   presets: [0.1, 0.5, 1],
 } as const;
 
-/** Absolute URL to the cause icon (must be absolute for the Actions spec). */
-export function iconUrl(): string {
-  return `${BASE_URL}/njia-icon.svg`;
+/**
+ * Absolute URL to the cause icon (must be absolute for the Actions spec).
+ * Prefer passing the request origin so it is always correct on any deployment,
+ * regardless of whether NEXT_PUBLIC_BASE_URL is configured.
+ */
+export function iconUrl(origin?: string): string {
+  const base = origin ?? BASE_URL;
+  return `${base}/njia-icon.svg`;
 }
