@@ -7,3 +7,7 @@ out
 *.log
 .vercel
 .wallets/
+
+# Internal planning / submission drafts (not part of the shipped project)
+CONCEPT.md
+SUBMISSION.md
